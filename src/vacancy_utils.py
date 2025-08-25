@@ -21,6 +21,22 @@ from src.vacancy_class import Vacancy
 def filter_vacancies(
     vacancies: List[Vacancy], filter_words: List[str]
 ) -> List[Vacancy]:
+    """
+        Фильтрует вакансии по ключевым словам в названии или описании.
+
+        Args:
+            vacancies: Список вакансий для фильтрации
+            filter_words: Список ключевых слов для поиска (может быть строкой)
+
+        Returns:
+            List[Vacancy]: Отфильтрованный список вакансий
+
+        Notes:
+            - Если filter_words пуст, возвращает все вакансии
+            - Если переданная строка, преобразует её в список
+            - Игнорирует регистр при поиске
+            - Защищена от None значений в title и description
+        """
     if not filter_words:
         return vacancies
 
@@ -65,6 +81,24 @@ def filter_vacancies(
 def get_vacancies_by_salary(
     vacancies: List[Vacancy], salary_range: str
 ) -> List[Vacancy]:
+    """
+        Фильтрует вакансии по диапазону зарплат.
+
+        Args:
+            vacancies: Список вакансий для фильтрации
+            salary_range: Диапазон зарплат в формате 'min-max'
+
+        Returns:
+            List[Vacancy]: Отфильтрованный список вакансий
+
+        Raises:
+            ValueError: Если формат salary_range некорректный
+
+        Notes:
+            - Если salary_range пуст, возвращает все вакансии
+            - Игнорирует вакансии без информации о зарплате
+            - Проверяет пересечение диапазонов зарплат
+        """
     if not salary_range:
         return vacancies
 
@@ -109,15 +143,41 @@ def get_vacancies_by_salary(
 
 
 def sort_vacancies(vacancies: List[Vacancy]) -> List[Vacancy]:
+    """
+        Сортирует вакансии по минимальной зарплате в порядке убывания.
+
+        Args:
+            vacancies: Список вакансий для сортировки
+
+        Returns:
+            List[Vacancy]: Отсортированный список вакансий
+
+        Notes:
+            - Вакансии без зарплаты считаются с зарплатой 0
+            - Сортировка по убыванию (от большей зарплаты к меньшей)
+        """
     return sorted(
         vacancies,
-        # ИСПРАВЛЕНИЕ: Упрощенная логика сортировки
         key=lambda x: (x.salary.get("from", 0) if x.salary else 0),
         reverse=True,
     )
 
 
 def get_top_vacancies(vacancies: List[Vacancy], top_n: int) -> List[Vacancy]:
+    """
+        Возвращает топ N вакансий из списка.
+
+        Args:
+            vacancies: Список вакансий
+            top_n: Количество вакансий для возврата
+
+        Returns:
+            List[Vacancy]: Список из первых top_n вакансий
+
+        Notes:
+            - Если top_n больше длины списка, возвращает все вакансии
+            - Если vacancies пуст, возвращает пустой список
+        """
     return vacancies[:top_n]
 
 
@@ -135,6 +195,18 @@ def get_top_vacancies(vacancies: List[Vacancy], top_n: int) -> List[Vacancy]:
 
 
 def print_vacancies(vacancies: List[Vacancy]) -> None:
+    """
+        Выводит отформатированную информацию о вакансиях.
+
+        Args:
+            vacancies: Список вакансий для отображения
+
+        Notes:
+            - Если список пуст, выводит сообщение об отсутствии вакансий
+            - Форматирует зарплату в читаемый вид
+            - Обрезает описание до 200 символов
+            - Защищена от None значений в описании
+        """
     if not vacancies:
         print("Нет вакансий для отображения")
         return
